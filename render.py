@@ -4,10 +4,8 @@
 This is the drawing step, not the entry point: it needs the system Chrome, so
 it does not run in the grader's sandbox. main.py copies the image it writes.
 
-The poster is laid out in HTML with CSS typography and inline SVG, then rendered
-to PNG by the system Chrome. Python's standard library only: nothing is
-installed before this runs, and no network is used. Both runs write the same
-bytes, so the image is deterministic.
+The poster is laid out in HTML with CSS typography and inline SVG, then
+rendered to PNG by the system Chrome. Python's standard library only.
 """
 import os
 import shutil
@@ -19,21 +17,29 @@ W = H = 1024
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "entry.png")
 
 # ----------------------------------------------------------------- the stories
-# Each entry: (icon id, section, headline, sublabel, accent)
+# Each entry: (icon id, region, headline, sublabel, accent)
 STORIES = [
-    ("bridge", "UKRAINE", "Kerch bridge collapses", "red"),
-    ("flags", "ASIA", "Trump lands in Manila", "ink"),
-    ("handshake", "DIPLOMACY", "Xi · Trump · Putin", "red"),
-    ("dove", "GAZA", "Winter floods the camps", "teal"),
-    ("haiti", "HAITI", "Troops fight the gangs", "teal"),
-    ("alert", "U.S.", "Nationwide alert test", "ink"),
-    ("flask", "HEALTH", "UN warns on chemicals", "teal"),
-    ("phone", "JORDAN", "Telegram is blocked", "ink"),
-    ("probe", "WASHINGTON", "An alleged Iran plot", "red"),
+    ("bridge", "UKRAINE", "Kerch bridge collapses", "Ukraine drops the span", "red"),
+    ("kyiv", "UKRAINE", "Kyiv's bridges hit", "Russia: 14 dead, 78 hurt", "red"),
+    ("flags", "PHILIPPINES", "Trump lands in Manila", "ASEAN summit opens", "ink"),
+    ("handshake", "DIPLOMACY", "Xi · Trump · Putin", "Trilateral set for Shenzhen", "red"),
+    ("kim", "NORTH KOREA", "A Kim meeting possible", "Trump: 'may' meet him", "ink"),
+    ("quad", "QUAD", "Four leaders, one table", "First meeting since 2024", "teal"),
+    ("dove", "GAZA", "Winter floods the camps", "Aid appeal; baby dies cold", "teal"),
+    ("haiti", "HAITI", "Troops fight the gangs", "Thousands rally for Bukele", "teal"),
+    ("migrant", "SPAIN", "Canary migrant surge", "As Spain votes nears", "teal"),
+    ("alert", "UNITED STATES", "Nationwide alert test", "Blackout rumours debunked", "ink"),
+    ("probe", "WASHINGTON", "An alleged Iran plot", "Trump says 'looking into' it", "red"),
+    ("phone", "JORDAN", "Telegram is blocked", "Move against extremism", "ink"),
+    ("flask", "HEALTH", "UN warns on chemicals", "Hormone-disrupting evidence up", "teal"),
+    ("chip", "BUSINESS", "Nvidia's CEO is gone", "Chip curbs on China bite", "ink"),
+    ("market", "MARKETS", "Stocks slip, dollar firm", "Anthropic IPO this week", "ink"),
+    ("ball", "FOOTBALL", "Germany 5-0 Netherlands", "Brazil sink Singapore 7-0", "teal"),
+    ("wine", "SOUTH AMERICA", "Uruguay 5-0 DR", "Mexico ends drought", "teal"),
+    ("gold", "AFRICA", "Mondlane goes on trial", "Mozambique's democracy test", "red"),
 ]
 
 # ------------------------------------------------------------------ the icons
-# Each icon is a flat drawing in a 100x100 box, drawn in the accent colour.
 ICONS = {
     "bridge": """
       <path d="M8 72h84" stroke="INK" stroke-width="5" stroke-linecap="round"/>
@@ -42,6 +48,14 @@ ICONS = {
             stroke="INK" stroke-width="3"/>
       <path d="M44 30l16 26-14 4 10 22" fill="none" stroke="ACC" stroke-width="7"
             stroke-linecap="round" stroke-linejoin="round"/>
+    """,
+    "kyiv": """
+      <path d="M10 66h80" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M26 66V44h48v22" fill="none" stroke="INK" stroke-width="5"/>
+      <path d="M50 44V26" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M50 26h12l-4 7h-8z" fill="ACC"/>
+      <path d="M38 54l-8 12M62 54l8 12" stroke="ACC" stroke-width="5"
+            stroke-linecap="round"/>
     """,
     "flags": """
       <path d="M22 84V20M22 26h40l-7 11 7 11H22" fill="none" stroke="INK" stroke-width="5"
@@ -59,12 +73,24 @@ ICONS = {
             stroke="INK" stroke-width="5" stroke-linecap="round"/>
       <path d="M38 56h24" stroke="ACC" stroke-width="7" stroke-linecap="round"/>
     """,
+    "kim": """
+      <circle cx="50" cy="50" r="28" fill="none" stroke="INK" stroke-width="5"/>
+      <path d="M34 42c4-6 28-6 32 0" fill="none" stroke="INK" stroke-width="5"
+            stroke-linecap="round"/>
+      <path d="M38 58h24" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M22 78c8-8 48-8 56 0" fill="none" stroke="ACC" stroke-width="5"
+            stroke-linecap="round"/>
+    """,
+    "quad": """
+      <path d="M14 22h30v26H14z" fill="none" stroke="INK" stroke-width="4"/>
+      <path d="M56 22h30v26H56z" fill="none" stroke="INK" stroke-width="4"/>
+      <path d="M14 56h30v26H14z" fill="none" stroke="ACC" stroke-width="4"/>
+      <path d="M56 56h30v26H56z" fill="none" stroke="ACC" stroke-width="4"/>
+    """,
     "dove": """
       <path d="M14 80h72" stroke="INK" stroke-width="5" stroke-linecap="round"/>
       <path d="M26 80l24-34 24 34" fill="none" stroke="INK" stroke-width="5"
             stroke-linejoin="round"/>
-      <path d="M26 80l24-34 24 34" fill="none" stroke="ACC" stroke-width="5"
-            stroke-linejoin="round" transform="translate(0,0)"/>
       <path d="M42 58l8 10 8-10" fill="none" stroke="INK" stroke-width="4"
             stroke-linejoin="round"/>
       <path d="M18 30l-6 14M32 26l-6 14M80 30l6 14M68 26l6 14" stroke="ACC"
@@ -80,6 +106,15 @@ ICONS = {
       <path d="M8 30l10 8-10 8" fill="none" stroke="ACC" stroke-width="5"
             stroke-linejoin="round" stroke-linecap="round"/>
     """,
+    "migrant": """
+      <path d="M12 82c14-4 22-14 30-30" fill="none" stroke="INK" stroke-width="5"
+            stroke-linecap="round"/>
+      <path d="M46 82c14-4 24-12 32-26" fill="none" stroke="INK" stroke-width="5"
+            stroke-linecap="round"/>
+      <circle cx="50" cy="24" r="8" fill="none" stroke="ACC" stroke-width="5"/>
+      <path d="M50 34v20M50 42l-12 10M50 42l12 8M50 54l-10 16M50 54l10 16"
+            fill="none" stroke="ACC" stroke-width="5" stroke-linecap="round"/>
+    """,
     "alert": """
       <path d="M50 16c14 0 24 12 24 28 0 18 6 26 6 26H20s6-8 6-26c0-16 10-28 24-28z"
             fill="none" stroke="INK" stroke-width="5" stroke-linejoin="round"/>
@@ -94,11 +129,19 @@ ICONS = {
       <circle cx="44" cy="74" r="4" fill="ACC"/>
       <circle cx="58" cy="70" r="3" fill="ACC"/>
     """,
-    "phone": """
-      <path d="M22 52l56-30-20 56-11-19z" fill="none" stroke="INK" stroke-width="5"
-            stroke-linejoin="round"/>
-      <path d="M47 59L78 22" stroke="INK" stroke-width="5" stroke-linecap="round"/>
-      <path d="M14 84L86 14" stroke="ACC" stroke-width="8" stroke-linecap="round"/>
+    "chip": """
+      <rect x="26" y="26" width="48" height="48" rx="4" fill="none" stroke="INK"
+            stroke-width="5"/>
+      <rect x="38" y="38" width="24" height="24" rx="2" fill="none" stroke="ACC"
+            stroke-width="5"/>
+      <path d="M38 12v14M62 12v14M38 74v14M62 74v14M12 38h14M12 62h14M74 38h14M74 62h14"
+            stroke="INK" stroke-width="5" stroke-linecap="round"/>
+    """,
+    "market": """
+      <path d="M12 76l18-24 14 12 16-30 12 8" fill="none" stroke="ACC" stroke-width="6"
+            stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M10 84h80" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M76 20v14M69 27h14" stroke="INK" stroke-width="5" stroke-linecap="round"/>
     """,
     "probe": """
       <circle cx="50" cy="50" r="30" fill="none" stroke="INK" stroke-width="5"/>
@@ -107,6 +150,32 @@ ICONS = {
             stroke-linecap="round"/>
       <path d="M70 30l18-18" stroke="ACC" stroke-width="6" stroke-linecap="round"/>
       <circle cx="86" cy="14" r="7" fill="ACC"/>
+    """,
+    "phone": """
+      <path d="M22 52l56-30-20 56-11-19z" fill="none" stroke="INK" stroke-width="5"
+            stroke-linejoin="round"/>
+      <path d="M47 59L78 22" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M14 84L86 14" stroke="ACC" stroke-width="8" stroke-linecap="round"/>
+    """,
+    "ball": """
+      <circle cx="50" cy="50" r="30" fill="none" stroke="INK" stroke-width="5"/>
+      <path d="M50 34l12 9-5 15H43l-5-15z" fill="none" stroke="ACC" stroke-width="5"
+            stroke-linejoin="round"/>
+      <path d="M50 20v14M20 50h14M80 50H66M27 27l10 10M73 27L63 37M27 73l10-10M73 73L63 63"
+            stroke="INK" stroke-width="4" stroke-linecap="round"/>
+    """,
+    "wine": """
+      <path d="M34 14h32l-4 26a12 12 0 01-24 0z" fill="none" stroke="INK" stroke-width="5"
+            stroke-linejoin="round"/>
+      <path d="M50 52v24M36 84h28" stroke="INK" stroke-width="5" stroke-linecap="round"/>
+      <path d="M38 30h24" stroke="ACC" stroke-width="6" stroke-linecap="round"/>
+    """,
+    "gold": """
+      <path d="M50 16l30 18-12 42H32L20 34z" fill="none" stroke="INK" stroke-width="5"
+            stroke-linejoin="round"/>
+      <path d="M20 34h60" stroke="INK" stroke-width="5"/>
+      <path d="M50 34v42" stroke="ACC" stroke-width="5"/>
+      <path d="M32 76l6-42M68 76l-6-42" stroke="ACC" stroke-width="4"/>
     """,
 }
 
@@ -119,16 +188,15 @@ ACCENTS = {
 
 def tile(story):
     """One story tile: its icon, its section and its headline."""
-    icon, section, headline, accent = story
+    icon, region, headline, sub, accent = story
     svg = (
-        '<svg viewBox="0 0 100 100" width="104" height="104" aria-hidden="true">'
+        '<svg viewBox="0 0 100 100" width="62" height="62" aria-hidden="true">'
         + ICONS[icon].replace("INK", "#1a1a1a").replace("ACC", ACCENTS[accent])
         + "</svg>"
     )
     return f"""      <article class="tile accent-{accent}">
-        <div class="art">{svg}</div>
-        <div class="kicker">{section}</div>
-        <h2>{headline}</h2>
+        <div class="art">{svg}<div class="txt"><div class="kicker">{region}</div>
+          <h2>{headline}</h2><p>{sub}</p></div></div>
       </article>
 """
 
@@ -143,49 +211,53 @@ def build_html():
   body {{ width:{W}px; height:{H}px; overflow:hidden; background:#f7f4ee; color:#141414;
          font-family:"Nimbus Sans","Liberation Sans","DejaVu Sans",Helvetica,Arial,sans-serif;
          display:flex; flex-direction:column; }}
-  .mast {{ padding:22px 34px 16px; border-bottom:3px solid #141414; }}
+  .mast {{ padding:14px 26px 12px; border-bottom:3px solid #141414; }}
   .kicker-row {{ display:flex; justify-content:space-between; align-items:baseline;
-                 border-bottom:1px solid #b9b2a4; padding-bottom:8px; }}
-  .kicker-row .k {{ font-size:17px; letter-spacing:.22em; text-transform:uppercase;
+                 border-bottom:1px solid #b9b2a4; padding-bottom:6px; }}
+  .kicker-row .k {{ font-size:15px; letter-spacing:.2em; text-transform:uppercase;
                     font-weight:700; color:#5f584c; }}
-  .kicker-row .r {{ font-size:17px; letter-spacing:.08em; color:#5f584c; font-weight:700; }}
-  h1 {{ font-size:82px; line-height:.92; letter-spacing:-.02em; font-weight:700;
-        margin-top:10px; text-transform:uppercase; }}
+  .kicker-row .r {{ font-size:15px; letter-spacing:.06em; color:#5f584c; font-weight:700; }}
+  h1 {{ font-size:62px; line-height:.92; letter-spacing:-.022em; font-weight:700;
+        margin-top:6px; text-transform:uppercase; }}
   h1 .thin {{ font-weight:300; letter-spacing:-.01em; }}
-  .dateline {{ display:flex; gap:22px; align-items:center; margin-top:10px;
-               font-size:20px; color:#2f2a23; font-weight:700; }}
-  .dateline .dot {{ width:7px; height:7px; border-radius:50%; background:#b3271d; }}
+  .dateline {{ display:flex; gap:18px; align-items:center; margin-top:7px;
+               font-size:16px; color:#2f2a23; font-weight:700; }}
+  .dateline .dot {{ width:6px; height:6px; border-radius:50%; background:#b3271d; }}
   .dateline .bar {{ flex:1; height:1px; background:#c9c2b4; }}
-  .dateline .loc {{ font-weight:400; letter-spacing:.02em; }}
+  .dateline .loc {{ font-weight:400; }}
   .grid {{ flex:1; display:grid; grid-template-columns:repeat(3,1fr);
-           grid-template-rows:repeat(3,1fr); }}
-  .tile {{ padding:16px 20px 14px; border-right:1px solid #d6d0c2;
-           border-bottom:1px solid #d6d0c2; display:flex; flex-direction:column; }}
+           grid-template-rows:repeat(6,1fr); }}
+  .tile {{ padding:9px 14px 8px; border-right:1px solid #d6d0c2;
+           border-bottom:1px solid #d6d0c2; display:flex; flex-direction:column;
+           justify-content:center; }}
   .tile:nth-child(3n) {{ border-right:none; }}
-  .tile:nth-child(n+7) {{ border-bottom:none; }}
-  .art {{ width:104px; height:104px; margin-bottom:12px; }}
-  .tile .kicker {{ font-size:16px; letter-spacing:.2em; text-transform:uppercase;
-                   font-weight:700; color:#7d7566; margin-bottom:8px; }}
-  .tile h2 {{ font-size:38px; line-height:1.04; font-weight:700; letter-spacing:-.015em; }}
-  .accent-red .art {{ border-left:6px solid #b3271d; padding-left:10px; }}
-  .accent-teal .art {{ border-left:6px solid #1c6b6b; padding-left:10px; }}
-  .accent-ink .art {{ border-left:6px solid #1a1a1a; padding-left:10px; }}
+  .tile:nth-child(n+16) {{ border-bottom:none; }}
+  .art {{ display:flex; align-items:center; gap:10px; }}
+  .art svg {{ flex:none; }}
+  .txt {{ min-width:0; }}
+  .tile .kicker {{ font-size:13px; letter-spacing:.17em; text-transform:uppercase;
+                   font-weight:700; color:#8a8274; margin-bottom:2px; }}
+  .tile h2 {{ font-size:25px; line-height:1.02; font-weight:700; letter-spacing:-.015em;
+              margin-bottom:3px; }}
+  .tile p {{ font-size:16px; line-height:1.15; color:#5b544a; }}
   .accent-red h2 {{ color:#8e1e16; }}
   .accent-teal h2 {{ color:#145353; }}
-  .foot {{ padding:12px 34px 14px; border-top:3px solid #141414; display:flex;
-           justify-content:space-between; font-size:14px; letter-spacing:.12em;
+  .accent-red .kicker {{ color:#a2695f; }}
+  .accent-teal .kicker {{ color:#6d8b88; }}
+  .foot {{ padding:8px 26px 10px; border-top:3px solid #141414; display:flex;
+           justify-content:space-between; font-size:13px; letter-spacing:.11em;
            text-transform:uppercase; color:#6d665a; font-weight:700; }}
 </style></head>
 <body>
   <header class="mast">
     <div class="kicker-row">
       <span class="k">The World in a Day</span>
-      <span class="r">Tuesday &middot; Asia / Europe / Americas</span>
+      <span class="r">Tuesday &middot; 17 November 2026</span>
     </div>
-    <h1><span class="thin">17 November</span> 2026</h1>
+    <h1><span class="thin">Tuesday</span> 17 November 2026</h1>
     <div class="dateline">
-      <span>Nine stories</span><span class="dot"></span>
-      <span class="loc">Manila &middot; Kyiv &middot; Gaza &middot; Port-au-Prince</span>
+      <span>Eighteen stories</span><span class="dot"></span>
+      <span class="loc">Europe &middot; Asia &middot; Americas &middot; Africa</span>
       <span class="bar"></span><span class="loc">One Tuesday, all told</span>
     </div>
   </header>
@@ -193,7 +265,7 @@ def build_html():
 {tiles}  </main>
   <footer class="foot">
     <span>Reported 17 Nov 2026</span>
-    <span>One day of world news</span>
+    <span>World news &middot; business &middot; sport</span>
     <span>make.fun</span>
   </footer>
 </body></html>
@@ -201,7 +273,7 @@ def build_html():
 
 
 def main():
-    """Render the poster with Chrome and copy the PNG into place."""
+    """Render the poster with Chrome and write the PNG in place."""
     with tempfile.TemporaryDirectory() as work:
         page = os.path.join(work, "poster.html")
         shot = os.path.join(work, "poster.png")
